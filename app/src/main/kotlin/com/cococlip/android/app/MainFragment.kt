@@ -10,7 +10,9 @@ import android.view.ViewGroup
 import android.os.Bundle
 import android.view.View
 import android.widget.ListView
-import com.cococlip.android.model.Clip
+import com.cococlip.android.rx.Rx
+import rx.schedulers.Schedulers
+import rx.android.schedulers.AndroidSchedulers
 
 /**
  * メインのフラグメントです。
@@ -33,8 +35,12 @@ public class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         // TODO
-        val clips = listOf(Clip("title", "body", 0F, 0F), Clip("2", "hoge", 1F, 1F))
-        val adapter = ClipListAdapter(getActivity().getApplicationContext(), 0, clips)
-        listView.setAdapter(adapter)
+        Rx.clips(22.0, 22.0)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    val adapter = ClipListAdapter(getActivity().getApplicationContext(), 0, it)
+                    listView.setAdapter(adapter)
+                }
     }
 }

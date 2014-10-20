@@ -1,16 +1,17 @@
 package com.cococlip.android.model
 
-import android.graphics.Bitmap
-
 /**
  * クリップです
  *
  * @author Taro Nagasawa
  */
 data class Clip(
+        public val id: String,
         public val title: String,
-        public val body: String,
-        public val latitude: Float,
-        public val longitude: Float,
-        public val image: Bitmap? = null
+        public val latitude: Double,
+        public val longitude: Double,
+        public val image1Url: String? = null,
+        public val image2Url: String? = null,
+        public val thumbnail1Url: String? = null,
+        public val thumbnail2Utl: String? = null
 )
