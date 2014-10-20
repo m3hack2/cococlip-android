@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/root_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <TextView
+        android:text="TITLE_TITLE_TITLE_TITLE_TITLE_TITLE_TITLE"
+        android:id="@+id/title_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:text="ADDRESS_ADDRESS_ADDRESS_ADDRESS_ADDRESS_ADDRESS"
+        android:id="@+id/address_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/title_view"
+        android:layout_below="@id/title_view"/>
+
+    <TextView
+        android:text="BODY_BODY_BODY_BODY_BODY_BODY_BODY_BODY_BODY_BODY"
+        android:id="@+id/body_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/address_view"
+        android:layout_below="@id/address_view"/>
+</RelativeLayout>
