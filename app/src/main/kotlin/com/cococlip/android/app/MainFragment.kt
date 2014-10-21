@@ -13,6 +13,11 @@ import android.widget.ListView
 import com.cococlip.android.rx.Rx
 import rx.schedulers.Schedulers
 import rx.android.schedulers.AndroidSchedulers
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import kotlin.properties.Delegates
+import android.app.Activity
 
 /**
  * メインのフラグメントです。
@@ -21,12 +26,44 @@ import rx.android.schedulers.AndroidSchedulers
  */
 public class MainFragment : Fragment() {
 
+    public trait Interface {
+        fun showClipPostFragment()
+    }
+
     private val locationView: TextView by viewInjector(R.id.location_view)
 
     private val listView: ListView by viewInjector(R.id.list_view)
 
+    private var interface: Interface by Delegates.notNull()
+
+    override fun onAttach(activity: Activity?) {
+        super.onAttach(activity)
+        if (activity is Interface) {
+            interface = activity
+        } else {
+            throw IllegalArgumentException("activity must implements ${javaClass<Interface>().getCanonicalName()}")
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super<Fragment>.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_main, container, false)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.main, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.getItemId()) {
+            R.id.action_post_clip -> interface.showClipPostFragment()
+            else -> return super.onOptionsItemSelected(item)
+        }
+        return true
     }
 
     public fun setLocation(location: Location) {
@@ -39,7 +76,6 @@ public class MainFragment : Fragment() {
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .onErrorReturn {
-                    android.util.Log.e("TEST", it.getMessage(), it)
                     listOf()
                 }
                 .subscribe {

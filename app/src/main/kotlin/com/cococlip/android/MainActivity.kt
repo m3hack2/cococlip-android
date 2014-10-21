@@ -2,8 +2,6 @@ package com.cococlip.android
 
 import android.app.Activity
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import android.widget.Toast
 import android.location.LocationManager
 import kotlin.properties.Delegates
@@ -13,7 +11,7 @@ import android.location.LocationListener
 import android.location.Location
 import com.cococlip.android.app.MainFragment
 
-public class MainActivity : Activity() {
+public class MainActivity : Activity(), MainFragment.Interface {
 
     private val locationManager: LocationManager by Delegates.lazy {
         getLocationManager()
@@ -47,7 +45,7 @@ public class MainActivity : Activity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super<Activity>.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
@@ -57,26 +55,17 @@ public class MainActivity : Activity() {
     }
 
     override fun onResume() {
-        super.onResume()
+        super<Activity>.onResume()
         locationManager.requestLocationUpdates(locationProvider, 0L, 0F, locationListener)
     }
 
     override fun onPause() {
         locationManager.removeUpdates(locationListener)
-        super.onPause()
+        super<Activity>.onPause()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        getMenuInflater().inflate(R.menu.main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        return if (item?.getItemId() == R.id.action_settings) {
-            Toast.makeText(getApplicationContext(), "Clicked", Toast.LENGTH_SHORT).show()
-            true
-        } else {
-            super.onOptionsItemSelected(item)
-        }
+    override fun showClipPostFragment() {
+        // TODO
+        Toast.makeText(this, "showClipPostFragment", Toast.LENGTH_SHORT).show()
     }
 }
