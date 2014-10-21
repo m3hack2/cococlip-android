@@ -38,6 +38,10 @@ public class MainFragment : Fragment() {
         Rx.clips(22.0, 22.0)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
+                .onErrorReturn {
+                    android.util.Log.e("TEST", it.getMessage(), it)
+                    listOf()
+                }
                 .subscribe {
                     val adapter = ClipListAdapter(getActivity().getApplicationContext(), 0, it)
                     listView.setAdapter(adapter)

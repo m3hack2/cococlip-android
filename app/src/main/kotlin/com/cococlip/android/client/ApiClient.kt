@@ -4,6 +4,8 @@ import com.cococlip.android.model.Clip
 import java.net.URL
 import org.json.JSONObject
 import org.json.JSONArray
+import org.funktionale.either.Either
+import org.funktionale.either.either
 
 /**
  * @author Taro Nagasawa
@@ -21,24 +23,23 @@ public object ApiClient {
         return builder.build()
     }
 
-    public fun getClips(latitude: Double, longitude: Double): List<Clip> {
-        val response = "/api/1/clips?lat=${latitude}&lon=${longitude}".readText()
+    public fun getClips(latitude: Double, longitude: Double): Either<Exception, List<Clip>> {
+        return either {
+            val response = "/api/1/clips?lat=${latitude}&lon=${longitude}".readText()
 
-        val jsonObject = JSONObject(response)
-        if (!jsonObject.has("results"))
-            return listOf()
-
-        return jsonObject.getJSONArray("results").map {
-            Clip(
-                    id = it.getString("id"),
-                    title = it.getString("title"),
-                    latitude = it.getDouble("lat"),
-                    longitude = it.getDouble("lon"),
-                    image1Url = it.getString("high_image1_url"),
-                    image2Url = it.getString("high_image2_url"),
-                    thumbnail1Url = it.getString("low_image1_url"),
-                    thumbnail2Utl = it.getString("low_image2_url")
-            )
+            val jsonObject = JSONObject(response)
+            jsonObject.getJSONArray("results").map {
+                Clip(
+                        id = it.getString("id"),
+                        title = it.getString("title"),
+                        latitude = it.getDouble("lat"),
+                        longitude = it.getDouble("lon"),
+                        image1Url = it.getString("high_image1_url"),
+                        image2Url = it.getString("high_image2_url"),
+                        thumbnail1Url = it.getString("low_image1_url"),
+                        thumbnail2Utl = it.getString("low_image2_url")
+                )
+            }
         }
     }
 }
