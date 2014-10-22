@@ -4,4 +4,8 @@
     <string name="app_name">cococlip</string>
     <string name="label_change">変更</string>
     <string name="label_post">投稿</string>
+
+    <string name="lable_title">タイトル</string>
+    <string name="label_body">本文</string>
+    <string name="label_complete">完了</string>
 </resources>

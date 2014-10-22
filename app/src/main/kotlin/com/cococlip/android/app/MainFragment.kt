@@ -4,7 +4,6 @@ import android.app.Fragment
 import android.widget.TextView
 import com.cococlip.android.R
 import com.cococlip.android.util.viewInjector
-import android.location.Location
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.os.Bundle
@@ -18,6 +17,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import kotlin.properties.Delegates
 import android.app.Activity
+import com.cococlip.android.model.Location
 
 /**
  * メインのフラグメントです。
@@ -27,7 +27,7 @@ import android.app.Activity
 public class MainFragment : Fragment() {
 
     public trait Interface {
-        fun showClipPostFragment()
+        fun showClipPostFragment(location: Location)
     }
 
     private val locationView: TextView by viewInjector(R.id.location_view)
@@ -36,8 +36,13 @@ public class MainFragment : Fragment() {
 
     private var interface: Interface by Delegates.notNull()
 
+    private var clipPostMenuItem: MenuItem by Delegates.notNull()
+
+    private var location: Location? = null
+
     override fun onAttach(activity: Activity?) {
         super.onAttach(activity)
+
         if (activity is Interface) {
             interface = activity
         } else {
@@ -56,18 +61,30 @@ public class MainFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.main, menu)
+        clipPostMenuItem = menu.findItem(R.id.action_post_clip)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        getActivity()?.let {
+            it.setTitle(R.string.app_name)
+            it.getActionBar().setDisplayHomeAsUpEnabled(false)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.getItemId()) {
-            R.id.action_post_clip -> interface.showClipPostFragment()
-            else -> return super.onOptionsItemSelected(item)
+        // TODO
+        if (item.getItemId() == R.id.action_post_clip && location != null) {
+            interface.showClipPostFragment(location!!) // ここでは絶対NotNullなのに。。
+            return true
         }
-        return true
+
+        return super.onOptionsItemSelected(item)
     }
 
     public fun setLocation(location: Location) {
-        locationView.setText("${location.getLatitude()}, ${location.getLongitude()}")
+        this.location = location
+        locationView.setText(location.getTextForDisplay())
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
