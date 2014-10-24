@@ -48,4 +48,5 @@ dependencies {
     compile 'com.netflix.rxjava:rxjava-android:0.20.5'
     compile 'org.funktionale:funktionale:0.4_M9'
     compile 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
+    compile 'com.squareup.picasso:picasso:2.3.4'
 }
