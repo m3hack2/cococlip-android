@@ -9,6 +9,7 @@ import com.cococlip.android.model.Location
 import com.squareup.okhttp.Request
 import com.squareup.okhttp.OkHttpClient
 import com.squareup.okhttp.Response
+import com.squareup.okhttp.FormEncodingBuilder
 
 /**
  * @author Taro Nagasawa
@@ -20,6 +21,16 @@ public object ApiClient {
     private fun Request.Builder.path(path: String): Request.Builder = url("https://cococlip.herokuapp.com" + path)
 
     private fun Request.Builder.executeBy(client: OkHttpClient): Response = client.newCall(build()).execute()
+
+    private fun Request.Builder.post(initFormEncodingBuilder: FormEncodingBuilder.() -> Unit): Request.Builder {
+        val builder = FormEncodingBuilder()
+        builder.initFormEncodingBuilder()
+        return post(builder.build())
+    }
+
+    private fun <T> FormEncodingBuilder.add(key: String, value: T) {
+        add(key, value.toString())
+    }
 
     private fun String.toJsonObject(): JSONObject = JSONObject(this)
 
@@ -57,6 +68,23 @@ public object ApiClient {
                                 thumbnail2Utl = it.findString("low_image2_url")
                         )
                     }
+        }
+    }
+
+    public fun postClip(title: String, body: String, location: Location): Either<Exception, String> {
+        return either {
+            Request.Builder()
+                    .path("/api/1/clips")
+                    .post {
+                        add("title", title)
+                        add("body", body)
+                        add("lat", location.latitude)
+                        add("lon", location.longitude)
+                    }.executeBy(client)
+                    .body()
+                    .string()
+                    .toJsonObject()
+                    .getString("_id")
         }
     }
 }

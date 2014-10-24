@@ -8,4 +8,6 @@
     <string name="lable_title">タイトル</string>
     <string name="label_body">本文</string>
     <string name="label_complete">完了</string>
+
+    <string name="msg_error_post">投稿に失敗しました</string>
 </resources>

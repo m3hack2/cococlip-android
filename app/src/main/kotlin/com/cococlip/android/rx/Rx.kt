@@ -24,4 +24,18 @@ public object Rx {
             }
         })
     }
+
+    public fun post(title: String, body: String, location: Location): Observable<String> {
+        return Observable.create(object : Observable.OnSubscribe<String> {
+            override fun call(subscriber: Subscriber<in String>) {
+                val (exception, id) = ApiClient.postClip(title, body, location)
+                if (id != null) {
+                    subscriber.onNext(id)
+                    subscriber.onCompleted()
+                } else {
+                    subscriber.onError(exception)
+                }
+            }
+        })
+    }
 }
