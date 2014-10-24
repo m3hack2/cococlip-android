@@ -6,18 +6,16 @@ import android.view.View
 import com.cococlip.android.R
 import android.widget.TextView
 import com.cococlip.android.model.Clip
-import com.cococlip.android.util.viewInjector
+import butterknife.bindView
 
 /**
  * @author Taro Nagasawa
  */
 public class ClipListItemView(context: Context) : FrameLayout(context) {
 
-    private val titleView: TextView by viewInjector(R.id.title_view)
+    private val titleView: TextView by bindView(R.id.title_view)
 
-    private val addressView: TextView by viewInjector(R.id.address_view)
-
-    private val bodyView: TextView by viewInjector(R.id.body_view)
+    private val addressView: TextView by bindView(R.id.address_view)
 
     private var alreadyInflated: Boolean = false
 
@@ -31,6 +29,7 @@ public class ClipListItemView(context: Context) : FrameLayout(context) {
 
     public fun bind(clip: Clip) {
         titleView.setText(clip.title)
+        addressView.setText(clip.location.getTextForDisplay())
     }
 
     public class object {

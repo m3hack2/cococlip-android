@@ -8,3 +8,4 @@ import com.cococlip.android.model.Location
  */
 
 public fun AndroidLocation.toLocation(): Location = Location(getLatitude(), getLongitude())
+

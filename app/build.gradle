@@ -3,6 +3,9 @@ apply plugin: 'kotlin-android'
 
 repositories {
     mavenCentral()
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+    }
 }
 
 android {
@@ -44,4 +47,5 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'com.netflix.rxjava:rxjava-android:0.20.5'
     compile 'org.funktionale:funktionale:0.4_M9'
+    compile 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
 }

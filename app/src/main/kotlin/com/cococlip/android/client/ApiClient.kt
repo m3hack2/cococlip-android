@@ -30,16 +30,20 @@ public object ApiClient {
 
             val jsonObject = JSONObject(response)
             jsonObject.getJSONArray("results").map {
+                val loc = it.getJSONObject("loc")
+
                 Clip(
-                        id = it.getString("id"),
+                        id = it.getString("_id"),
                         title = it.getString("title"),
-                        location = Location(it.getDouble("lat"), it.getDouble("lon")),
-                        image1Url = it.getString("high_image1_url"),
-                        image2Url = it.getString("high_image2_url"),
-                        thumbnail1Url = it.getString("low_image1_url"),
-                        thumbnail2Utl = it.getString("low_image2_url")
+                        location = Location(loc.getDouble("lat"), loc.getDouble("lon")),
+                        image1Url = it.findString("high_image1_url"),
+                        image2Url = it.findString("high_image2_url"),
+                        thumbnail1Url = it.findString("low_image1_url"),
+                        thumbnail2Utl = it.findString("low_image2_url")
                 )
             }
         }
     }
+
+    private fun JSONObject.findString(key: String): String? = if (has(key)) getString(key) else null
 }

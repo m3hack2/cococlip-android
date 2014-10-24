@@ -8,12 +8,24 @@ import com.cococlip.android.util.getLocationManager
 import android.location.Criteria
 import android.location.LocationListener
 import android.location.Location as AndroidLocation
-import com.cococlip.android.app.MainFragment
-import com.cococlip.android.app.ClipPostFragment
-import com.cococlip.android.util.toLocation
+import android.widget.TextView
+import android.widget.ListView
+import butterknife.bindView
 import com.cococlip.android.model.Location
+import com.cococlip.android.rx.Rx
+import rx.schedulers.Schedulers
+import rx.android.schedulers.AndroidSchedulers
+import com.cococlip.android.app.ClipListAdapter
+import com.cococlip.android.util.toLocation
+import android.view.Menu
+import android.view.MenuItem
+import java.util.concurrent.TimeUnit
 
-public class MainActivity : Activity(), MainFragment.Interface {
+public class MainActivity : Activity() {
+
+    private val locationView: TextView by bindView(R.id.location_view)
+
+    private val listView: ListView by bindView(R.id.list_view)
 
     private val locationManager: LocationManager by Delegates.lazy {
         getLocationManager()
@@ -28,7 +40,7 @@ public class MainActivity : Activity(), MainFragment.Interface {
     private val locationListener = object : LocationListener {
         override fun onLocationChanged(location: AndroidLocation?) {
             location?.let {
-                mainFragment.setLocation(it.toLocation())
+                setLocation(it.toLocation())
             }
         }
 
@@ -42,27 +54,20 @@ public class MainActivity : Activity(), MainFragment.Interface {
         }
     }
 
-    private val mainFragment by Delegates.lazy {
-        MainFragment()
-    }
-
-    private val clipPostFragment by Delegates.lazy {
-        ClipPostFragment()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super<Activity>.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction()
-                    .add(R.id.container, mainFragment)
-                    .commit()
-        }
+        setContentView(R.layout.fragment_main)
+        initViews()
+    }
+
+    private fun initViews() {
+        locationView
+        listView
     }
 
     override fun onResume() {
         super<Activity>.onResume()
-        locationManager.requestLocationUpdates(locationProvider, 0L, 0F, locationListener)
+        locationManager.requestLocationUpdates(locationProvider, TimeUnit.SECONDS.toMillis(30), 1.0F, locationListener)
     }
 
     override fun onPause() {
@@ -70,11 +75,33 @@ public class MainActivity : Activity(), MainFragment.Interface {
         super<Activity>.onPause()
     }
 
-    override fun showClipPostFragment(location: Location) {
-        clipPostFragment.setArgument(location)
-        getFragmentManager().beginTransaction()
-                .replace(R.id.container, clipPostFragment)
-                .addToBackStack(null)
-                .commit()
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        getMenuInflater().inflate(R.menu.main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        locationManager.getLastKnownLocation(locationProvider)?.let {
+            if (item?.getItemId() == R.id.action_post_clip) {
+                ClipPostActivity.launch(this@MainActivity, it.toLocation())
+                return true
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun setLocation(location: Location) {
+        locationView.setText(location.getTextForDisplay())
+        Rx.clips(location)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .onErrorReturn {
+                    listOf()
+                }
+                .subscribe {
+                    val adapter = ClipListAdapter(getApplicationContext(), 0, it)
+                    listView.setAdapter(adapter)
+                }
     }
 }

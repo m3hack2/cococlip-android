@@ -8,7 +8,9 @@
         android:text="TITLE_TITLE_TITLE_TITLE_TITLE_TITLE_TITLE"
         android:id="@+id/title_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:textSize="20sp"/>
 
     <TextView
         android:text="ADDRESS_ADDRESS_ADDRESS_ADDRESS_ADDRESS_ADDRESS"
@@ -16,13 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@id/title_view"
-        android:layout_below="@id/title_view"/>
-
-    <TextView
-        android:text="BODY_BODY_BODY_BODY_BODY_BODY_BODY_BODY_BODY_BODY"
-        android:id="@+id/body_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/address_view"
-        android:layout_below="@id/address_view"/>
+        android:layout_below="@id/title_view"
+        android:textColor="#888888"
+        android:textSize="16sp"/>
 </RelativeLayout>
