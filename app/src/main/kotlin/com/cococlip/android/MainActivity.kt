@@ -102,6 +102,10 @@ public class MainActivity : Activity() {
                 .subscribe {
                     val adapter = ClipListAdapter(getApplicationContext(), 0, it)
                     listView.setAdapter(adapter)
+                    listView.setOnItemClickListener {(adapterView, view, i, l) ->
+                        val id = adapter.getItem(i).id
+                        ClipActivity.launch(this@MainActivity, id)
+                    }
                 }
     }
 }

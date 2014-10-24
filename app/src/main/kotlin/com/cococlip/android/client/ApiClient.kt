@@ -71,6 +71,32 @@ public object ApiClient {
         }
     }
 
+    public fun getClip(id: String): Either<Exception, Clip> {
+        return either {
+            Request.Builder()
+                    .path("/api/1/clips/$id")
+                    .get()
+                    .executeBy(client)
+                    .body()
+                    .string()
+                    .toJsonObject()
+                    .let {
+                        val loc = it.getJSONObject("loc")
+
+                        Clip(
+                                id = it.getString("_id"),
+                                title = it.getString("title"),
+                                location = Location(loc.getDouble("lat"), loc.getDouble("lon")),
+                                body = it.getString("body"),
+                                image1Url = it.findString("high_image1_url"),
+                                image2Url = it.findString("high_image2_url"),
+                                thumbnail1Url = it.findString("low_image1_url"),
+                                thumbnail2Utl = it.findString("low_image2_url")
+                        )
+                    }
+        }
+    }
+
     public fun postClip(title: String, body: String, location: Location): Either<Exception, String> {
         return either {
             Request.Builder()

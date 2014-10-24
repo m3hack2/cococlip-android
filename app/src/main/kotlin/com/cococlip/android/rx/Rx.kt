@@ -25,6 +25,21 @@ public object Rx {
         })
     }
 
+    public fun clip(id: String): Observable<Clip> {
+        return Observable.create(object : Observable.OnSubscribe<Clip> {
+            override fun call(subscriber: Subscriber<in Clip>) {
+                val (exception, clip) = ApiClient.getClip(id)
+                if (clip != null) {
+                    subscriber.onNext(clip)
+                    subscriber.onCompleted()
+                } else {
+                    subscriber.onError(exception)
+                }
+            }
+
+        })
+    }
+
     public fun post(title: String, body: String, location: Location): Observable<String> {
         return Observable.create(object : Observable.OnSubscribe<String> {
             override fun call(subscriber: Subscriber<in String>) {
